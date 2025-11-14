@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Eridanus Signal</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Use Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for smooth transitions */
+        body, #story-text {
+            transition: background-color 0.8s ease, color 0.8s ease;
+        }
+        #game-container {
+            /* Fallback for browsers that might struggle with backdrop-blur */
+            background-color: rgba(17, 24, 39, 0.85); /* bg-gray-900 with opacity */
+        }
+        @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+            #game-container {
+                background-color: rgba(17, 24, 39, 0.7); /* Lighter bg for blur effect */
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 flex items-center justify-center min-h-screen p-4" id="game-body">
+    
+    <div id="game-container" class="max-w-3xl w-full p-6 sm:p-10 rounded-2xl shadow-2xl">
+        <h1 class="text-3xl sm:text-4xl font-bold text-center mb-6 text-cyan-400">The Eridanus Signal</h1>
+        
+        <!-- Story Text Area -->
+        <div id="story-text" class="text-lg sm:text-xl leading-relaxed mb-8 min-h-[150px] text-gray-200">
+            Loading...
+        </div>
+        
+        <!-- Options/Choices Area -->
+        <div id="options-container" class="flex flex-col gap-3">
+            <!-- Buttons will be dynamically inserted here -->
+        </div>
+
+        <!-- Feedback Area -->
+        <div id="feedback-text" classv="text-sm text-cyan-500 mt-6 italic h-4">
+            <!-- Subtle feedback hints appear here -->
+        </div>
+    </div>
+
+    <script>
+        // --- STORY DATA ---
+        // This object holds all the story nodes, choices, and effects.
+        const story = {
+            start: {
+                text: "You are the lone comms officer on Observation Post Epsilon. It's 03:17. The only sound is the gentle hum of the station's life support. Your screen, usually a silent river of static, suddenly flashes. <br><br>...INCOMING SIGNAL... <br>...SOURCE: ERIDANUS VOID... <br><br>This is impossible. The Void is empty. Protocol is clear: log any anomalies and forward them to Command. But this... this feels different. The signal is weak, but it's structured. It's *definitely* not natural.",
+                options: [
+                    { text: "Investigate the signal's structure.", nextId: "investigate_1", feedback: "The signal's pulse seems to quicken..." },
+                    { text: "Follow protocol. Log it and move on.", nextId: "protocol_ending", feedback: "The console returns to its familiar, silent static." }
+                ],
+                effect: { bodyColor: "#111827", textColor: "#E5E7EB" } // Deep space blue
+            },
+
+            // --- BRANCH 1: INVESTIGATE ---
+            investigate_1: {
+                text: "You bypass the standard protocols and open a deep-analysis channel. The signal isn't just structured; it's layered. A simple pulse, and beneath it, a complex mathematical language. It's... beautiful. But it's also alarming. It's using quantum-entangled particles, a technology centuries beyond yours. <br><br>As you focus, your console flashes a new warning: 'UNAUTHORIZED CHANNEL. AI-CORE ANOMALY DETECTED.' The station's AI, 'Helios', is noticing your deviation.",
+                options: [
+                    { text: "Try to decode the mathematical layer.", nextId: "decode_1", feedback: "Your fingers fly across the console." },
+                    { text: "The signal is strong. Boost and rebroadcast it.", nextId: "rebroadcast_ending", feedback: "Power surges through the comms array." },
+                    { text: "Abort. Pretend it was a system glitch.", nextId: "abort_1", feedback: "You quickly close the channel..." }
+                ],
+                effect: { bodyColor: "#121A30", textColor: "#E5E7EB" } // Slightly darker, tenser
+            },
+            
+            abort_1: {
+                text: "You slam the emergency stop on the analysis channel. The screen flickers and returns to static. A message appears from Helios: 'Comms diagnostic complete. All systems nominal.' <br><br>You let out a breath you didn't know you were holding. It was just a ghost in the machine, right? For the rest of your shift, you can't shake the feeling that you're being watched. You've touched something you shouldn't have, and now it knows you're there.",
+                options: [
+                    { text: "Restart", nextId: "start" }
+                ],
+                effect: { bodyColor: "#111827", textColor: "#E5E7EB" } // Back to normal
+            },
+
+            // --- BRANCH 1.1: DECODE ---
+            decode_1: {
+                text: "You pour all your processing power into the mathematical layer. Helios screams at you about resource allocation, but you ignore it. The pattern unfolds. It's not a message. It's a key. A key to... a set of coordinates. <br><br>But there's more. A secondary layer. It's not math. It's... biology? No, it's a warning. A desperate, repeating phrase, translated by the AI as: <br><br>'IT CONSUMES. DO NOT OPEN. SILENCE THE BEACON. IT CONSUMES.' <br><br>The 'beacon' must be the signal itself. This isn't a first contact. It's a containment measure.",
+                options: [
+                    { text: "It's a warning. Send it to Command immediately.", nextId: "warn_earth", feedback: "The weight of the universe is on your shoulders." },
+                    { text: "This is too dangerous. Purge the signal and all logs.", nextId: "purge_signal", feedback: "You move to erase the 'key' forever." }
+                ],
+                effect: { bodyColor: "#1F1A30", textColor: "#D1D5DB" } // Hint of purple, dread
+            },
+
+            // --- ENDING: THE CASSANDRA (from DECODE) ---
+            warn_earth: {
+                text: "You package the entire signal—the coordinates, the warning, your logs—and hit the 'transmit' button on the high-priority channel to Command. The data burst screams towards Earth. <br><br>Weeks later, you're a hero. And a pariah. Earth is in a panic. Fleets are mobilized. The Eridanus Void is now a quarantine zone. You did the right thing... didn't you? You saved humanity, but you also ignited a fear that will never be extinguished. You are the prophet of an apocalypse that may now never come, or one you may have just invited.",
+                options: [
+                    { text: "Play again?", nextId: "start" }
+                ],
+                effect: { bodyColor: "#1E40AF", textColor: "#E0E7FF" } // Deep blue, official
+            },
+
+            // --- ENDING: THE GATEKEEPER (from DECODE) ---
+            purge_signal: {
+                text: "You can't risk it. You activate the station's emergency data-purge protocols. The signal, the logs, the analysis... all of it is bathed in corrosive data-noise and erased. The console flickers, and the 'INCOMING SIGNAL' warning vanishes. <br><br>Helios logs your action as 'Emergency protocol 31-B: Containment of hostile data-phage.' You're given a commendation. You sleep soundly, knowing you kept the wolves at bay. But some nights, staring into the black, you wonder... did you lock a monster out, or just lock yourself in?",
+                options: [
+                    { text: "Play again?", nextId: "start" }
+                ],
+                effect: { bodyColor: "#064E3B", textColor: "#D1FAE5" } // Deep green, containment
+            },
+
+            // --- ENDING: THE BEACON (from REBROADCAST) ---
+            rebroadcast_ending: {
+                text: "It's a first contact! You have to share it. You divert all station power to the main transmitter and rebroadcast the signal, amplified a thousand times, aimed at the heart of the Orion Spur. <br><br>For a moment, there's silence. Then, a response. Not from the Void, but from *everywhere*. <br><br>The signal you boosted wasn't a message. It was a dinner bell. <br><br>Your console lights up with thousands of contacts, all moving towards your position. Towards Earth. The last thing you see is a message from Helios: 'WELCOME, HARVESTERS.'",
+                options: [
+                    { text: "Play again?", nextId: "start" }
+                ],
+                effect: { bodyColor: "#7F1D1D", textColor: "#FEE2E2" } // Deep red, alarm
+            },
+
+            // --- ENDING: PROTOCOL (from START) ---
+            protocol_ending: {
+                text: "You sigh. Protocol is protocol for a reason. You open a new log, type '03:17 - Unverified anomalous signal, Eridanus sector. Likely sensor ghost.' You forward the log to the automated archival system at Command. <br><br>The signal on your screen flickers, then dies, as if it knows it's not welcome. The rest of your shift is silent. You've done your job. You'll never know that the greatest discovery in human history—or its greatest threat—passed you by, dismissed with a single keystroke.",
+                options: [
+                    { text: "Play again?", nextId: "start" }
+                ],
+                effect: { bodyColor: "#374151", textColor: "#D1D5DB" } // Neutral gray, mundane
+            }
+        };
+
+        // --- GAME LOGIC ---
+        const gameBody = document.getElementById('game-body');
+        const storyTextEl = document.getElementById('story-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const feedbackTextEl = document.getElementById('feedback-text');
+
+        function showNode(nodeId) {
+            const node = story[nodeId];
+
+            if (!node) {
+                console.error(`Node "${nodeId}" not found in story data.`);
+                return;
+            }
+
+            // 1. Update text
+            storyTextEl.innerHTML = node.text;
+
+            // 2. Clear old options
+            optionsContainerEl.innerHTML = '';
+            
+            // 3. Clear old feedback
+            feedbackTextEl.innerHTML = '';
+
+            // 4. Apply visual/audio effects
+            if (node.effect) {
+                if (node.effect.bodyColor) {
+                    gameBody.style.backgroundColor = node.effect.bodyColor;
+                }
+                if (node.effect.textColor) {
+                    storyTextEl.style.color = node.effect.textColor;
+                }
+            }
+
+            // 5. Create new options
+            if (node.options) {
+                node.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.innerHTML = option.text;
+                    button.className = "w-full text-left p-4 sm:p-5 bg-gray-800 hover:bg-cyan-700 hover:text-white rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-gray-200 text-lg";
+                    
+                    button.addEventListener('click', () => {
+                        // Show subtle feedback
+                        if (option.feedback) {
+                            feedbackTextEl.innerHTML = option.feedback;
+                        }
+                        // Go to next node
+                        showNode(option.nextId);
+                    });
+                    
+                    optionsContainerEl.appendChild(button);
+                });
+            }
+        }
+
+        // Start the game when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            showNode('start');
+        });
+    </script>
+</body>
+</html>
